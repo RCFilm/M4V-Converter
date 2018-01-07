@@ -1,4 +1,4 @@
-FROM linuxserver/sabnzbd
+FROM ubuntu:16.04 AS build
 MAINTAINER xzkingzxburnzx
 
 ARG     PREFIX="/tmp/ffmpeg"
@@ -291,7 +291,9 @@ RUN \
     hash -r && \
     cd tools && \
     make qt-faststart && \
-    cp qt-faststart ${BINDIR} && \
+    cp qt-faststart ${BINDIR}
+
+RUN \
     cp $(ldd ${BINDIR}/ffmpeg | cut -d ' ' -f 3) /usr/local/lib/ && \
     cp ${BINDIR}/* /usr/local/bin/ && \
     cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
@@ -300,9 +302,15 @@ RUN \
     apt-get remove --purge -y ${DEPENDS} && \
     apt-get autoremove --purge -y
 
+FROM linuxserver/sabnzbd AS release
+MAINTAINER xzKinGzxBuRnzx
+
+ENV     LD_LIBRARY_PATH=/usr/local/lib
+
 RUN \
     mkdir -p /app/M4V-Converter
 
 COPY M4V-Converter.sh default.conf LICENSE sabnzbd.sh /app/M4V-Converter/
-COPY /root /
+COPY root /
 COPY sabnzbd.ini /defaults/
+COPY --from=build /usr/local /usr/local
