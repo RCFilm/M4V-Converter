@@ -308,9 +308,18 @@ MAINTAINER xzKinGzxBuRnzx
 ENV     LD_LIBRARY_PATH=/usr/local/lib
 
 RUN \
-    mkdir -p /app/M4V-Converter
+    mkdir -p /app/M4V-Converter && \
+    cd /tmp && \
+    curl -o M4V-Converter.tar.gz -L https://github.com/Digiex/M4V-Converter/archive/master.tar.gz && \
+    tar xzvf M4V-Converter.tar.gz && \
+    cp \
+        M4V-Converter-master/M4V-Converter.sh \
+        M4V-Converter-master/default.conf \
+        M4V-Converter-master/LICENSE \
+        /app/M4V-Converter/ && \
+    rm -rf M4V-Converter*
 
-COPY M4V-Converter.sh default.conf LICENSE sabnzbd.sh /app/M4V-Converter/
+COPY sabnzbd.sh /app/M4V-Converter/
 COPY root /
 COPY sabnzbd.ini /defaults/
 COPY --from=build /usr/local /usr/local
