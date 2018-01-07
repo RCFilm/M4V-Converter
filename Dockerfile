@@ -307,10 +307,18 @@ MAINTAINER xzKinGzxBuRnzx
 ENV     LD_LIBRARY_PATH=/usr/local/lib
 
 RUN \
-    sed -i -e "s#\(ScriptDir=\).*#\1$\{AppDir\}/scripts#g" /defaults/nzbget.conf && \
     mkdir -p /app/M4V-Converter && \
-    ln -s /app/M4V-Converter /app/nzbget/scripts/M4V-Converter
+    cd /tmp && \
+    wget -O M4V-Converter.tar.gz https://github.com/Digiex/M4V-Converter/archive/master.tar.gz && \
+    tar xzvf M4V-Converter.tar.gz && \
+    cp \
+        M4V-Converter-master/M4V-Converter.sh \
+        M4V-Converter-master/default.conf \
+        M4V-Converter-master/LICENSE \
+        /app/M4V-Converter/ && \
+    ln -s /app/M4V-Converter /app/nzbget/scripts/M4V-Converter && \
+    rm -rf M4V-Converter* && \
+    sed -i -e "s#\(ScriptDir=\).*#\1$\{AppDir\}/scripts#g" /defaults/nzbget.conf
 
-COPY M4V-Converter.sh default.conf LICENSE /app/M4V-Converter/
 COPY root /
 COPY --from=build /usr/local /usr/local
