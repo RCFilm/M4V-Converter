@@ -1,4 +1,4 @@
-FROM linuxserver/nzbget
+FROM alpine:3.7 AS build
 MAINTAINER xzkingzxburnzx
 
 ARG     PREFIX="/tmp/ffmpeg"
@@ -291,7 +291,9 @@ RUN \
     hash -r && \
     cd tools && \
     make qt-faststart && \
-    cp qt-faststart ${BINDIR} && \
+    cp qt-faststart ${BINDIR}
+
+RUN \
     cp $(ldd ${BINDIR}/ffmpeg | cut -d ' ' -f 3) /usr/local/lib/ && \
     cp ${BINDIR}/* /usr/local/bin/ && \
     cp -r ${PREFIX}/share/ffmpeg /usr/local/share/ && \
@@ -299,10 +301,16 @@ RUN \
     rm -rf ${PREFIX} && \
     apk del --purge ${DEPENDS}
 
+FROM linuxserver/nzbget AS release
+MAINTAINER xzKinGzxBuRnzx
+
+ENV     LD_LIBRARY_PATH=/usr/local/lib
+
 RUN \
     sed -i -e "s#\(ScriptDir=\).*#\1$\{AppDir\}/scripts#g" /defaults/nzbget.conf && \
     mkdir -p /app/M4V-Converter && \
     ln -s /app/M4V-Converter /app/nzbget/scripts/M4V-Converter
 
 COPY M4V-Converter.sh default.conf LICENSE /app/M4V-Converter/
-COPY /root /
+COPY root /
+COPY --from=build /usr/local /usr/local
