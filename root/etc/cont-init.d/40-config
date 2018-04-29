@@ -4,7 +4,7 @@
     source /config/nzbget.conf &>/dev/null
 
 [[ -z "${ScriptDir}" ]] && \
-    script_dir=/app/nzbget/scripts
+    ScriptDir=/app/nzbget/scripts
 
 [[ ! -e "${ScriptDir}" ]] && \
     mkdir -p "${ScriptDir}"
