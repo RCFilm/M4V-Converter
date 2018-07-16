@@ -20,6 +20,7 @@ RUN \
         M4V-Converter-master/M4V-Converter.sh \
         M4V-Converter-master/default.conf \
         M4V-Converter-master/LICENSE \
+        M4V-Converter-master/README.md \
         /app/M4V-Converter/ && \
     ln -s /app/M4V-Converter /app/nzbget/scripts/M4V-Converter && \
     rm -rf M4V-Converter* && \
